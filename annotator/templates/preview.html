@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Statute Diff</title>
+	<meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}" crossorigin="anonymous">
+
+    <style>
+        #notification {
+            position: absolute;
+            top: 0;
+            right: 0;
+        }
+        #para {
+            border: 1px solid black;
+            width: 300px;
+            height: 100px;
+            overflow: scroll;
+        }
+        .toast-color {
+            color: white;
+            background-color: #33b5e5;
+        }
+        h1 {
+            color:green;
+        }
+
+      .table-wrapper {
+      width: 700px;
+      padding: 20px;	
+      box-shadow: 0 1px 1px rgba(0,0,0,.05);
+      }
+      .table-title {
+          padding-bottom: 10px;
+          margin: 0 0 10px;
+      }
+      .table-title h2 {
+          margin: 6px 0 0;
+          font-size: 10px;
+      }
+      .table-title .add-new {
+          float: right;
+      height: 30px;
+      font-weight: bold;
+      font-size: 12px;
+      text-shadow: none;
+      min-width: 100px;
+      border-radius: 50px;
+      line-height: 13px;
+      }
+    .table-title .add-new i {
+      margin-right: 4px;
+    }
+      table.table {
+          table-layout: fixed;
+      }
+      table.table tr th, table.table tr td {
+          border-color: #e9e9e9;
+      }
+      table.table th i {
+          font-size: 13px;
+          margin: 0 5px;
+          cursor: pointer;
+      }
+      table.table th:last-child {
+          width: 100px;
+      }
+      table.table td a {
+      cursor: pointer;
+          display: inline-block;
+          margin: 0 5px;
+      min-width: 24px;
+      }    
+    table.table td a.add {
+          color: #27C46B;
+      }
+      table.table td a.edit {
+          color: #FFC107;
+      }
+      table.table td a.delete {
+          color: #E34724;
+      }
+      table.table td i {
+          font-size: 19px;
+      }
+    table.table td a.add i {
+          font-size: 24px;
+        margin-right: -1px;
+          position: relative;
+          top: 3px;
+      }    
+      table.table .form-control {
+          height: 32px;
+          line-height: 32px;
+          box-shadow: none;
+          border-radius: 2px;
+      }
+    table.table .form-control.error {
+      border-color: #f50000;
+    }
+    table.table td .add {
+      display: none;
+    }
+  </style>
+  <style type="text/css">
+	.main-section{
+	margin:0 auto;
+	padding: 20px;
+	margin-top: 100px;
+	background-color: #fff;
+	box-shadow: 0px 0px 20px #c1c1c1;
+}
+#custom_card{
+	background-color:grey;
+	color:#fff;
+	padding:10px;
+}
+#custom_card2{
+	background-color:#383838;
+	color:#fff;
+	padding:10px;
+}
+</style>
+  
+    <!-- Font Awesome -->
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css">
+<!-- Bootstrap core CSS -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.2.1/css/bootstrap.min.css" rel="stylesheet">
+<!-- Material Design Bootstrap -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.7.3/css/mdb.min.css" rel="stylesheet">
+
+</head>
+<body>
+    <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item active">
+        <a class="nav-link" href="/">Home </a>
+      </li>
+       <li class="nav-item">
+        <a class="nav-link" href="/details">Details <span class="sr-only">(current)</span></a>
+      </li>
+       <li class="nav-item">
+        <a class="nav-link" href="#">About</a>
+      </li>
+
+
+    </ul>
+
+  </div>
+</nav>
+<br/>
+<br/>
+<br/>
+<br/>
+
+<div class="container">
+  <div class="row">
+    {% if rows.pages > 0%}
+    <div class="col-md-16">
+        <div class="progress">
+          <div class="progress-bar" role="progressbar" aria-valuenow="{{ ((rows.page / rows.pages) * 100)|round|int   }}"
+          aria-valuemin="0" aria-valuemax="{{ ((rows.page / rows.pages) * 100)|round|int  }}" style="width:{{ ((rows.page / rows.pages) * 100)|round|int  }}%">
+          {{ ((rows.page / rows.pages)  * 100)|round|int   }} %
+          </div>
+        </div>
+       
+        <span class="badge badge-danger">Paragraph {{ rows.page }} of {{ rows.pages }} <span class="form-response"></span></span>
+        {% for row in rows.items %} 
+        <div class="mb-10 shadow-sm">
+            <div class="jumbotron jumbotron-fluid">
+              <div class="container">
+                <h1 class="display-4">Start Your Annoations</h1>
+                  <p>Document id: <b><span id="paraid">{{row.paraid}}</span></b></p>
+                <p class="lead">{{row.content}}</p>
+              </div>
+            </div>
+              <!--Textarea with icon prefix-->
+            <div class="md-form mb-1 pink-textarea active-pink-textarea-2">
+              <i class="fas fa-question-circle prefix" aria-hidden="true"></i>
+                <input id="question" class="md-textarea form-control" placeholder="Input Question Here" type="text"/>
+            </div>
+            <div class="md-form mb-1 pink-textarea active-pink-textarea-2">
+              <i class="fa fa-reply" aria-hidden="true"></i>
+                <input id="answer" class="md-textarea form-control" placeholder="Input Answer Here" type="text"/>
+            </div>
+           <input type="button" class="btn btn-primary" id="annotethis" value="Annoate This"></input>
+           {% if rows.has_next %}
+           - Or - 
+           <a class="btn btn-danger" href="{{ url_for('preview', page_num=rows.next_num, paraid = row.paraid) }}">Ignore this Paragraph</a>
+           {% endif %}
+           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp
+            {% if rows.has_prev %}
+            <a class="btn btn-secondary" href="{{ url_for('preview', page_num=rows.prev_num) }}">&laquo; Previous</a>
+            {% else %}
+            <button type="button" class="btn btn-secondary" disabled>Previous</button>
+            {% endif %}
+              
+            {% if rows.has_next %}
+             <a class="btn btn-success" href="{{ url_for('preview', page_num=rows.next_num) }}">Next &raquo;</a>
+            {% else %}
+            <button type="button" class="btn btn-success" disabled>Next</button>
+            {% endif %}
+            <hr/>
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+              <div>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                          <th>QuesID</th>
+                          <th>Question</th>
+                          <th>Answer</th>
+                          <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="quesResult">
+                    </tbody>
+                </table>
+            </div>
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+    
+            </div>
+         </div>
+        {% endfor %}
+
+    {% else %}
+    <div class="alert alert-danger" role="alert">
+      <p>Please select another file or  this file may not have data.</p>     
+      <p>Please check!</p>     
+    </div>
+    {% endif %}
+  </div>
+
+</div>
+<!-- JQuery -->
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/bootstrap.js') }}"></script>
+<script type="text/javascript">
+$(document).ready(function() {
+  para_id = document.getElementById("paraid").innerText;
+  $.ajax({
+			data : {
+				paraid : para_id,
+			},
+			type : 'POST',
+			url : '/getQues'
+		})
+		.done(function(data) {
+      
+			if (data.error) {
+        $(".alert").hide()
+			}
+			else {
+        if (data.length > 0) {
+          $(".alert").show()
+          data.forEach(myFunction);
+          function myFunction(item) {
+              document.getElementById("quesResult").innerHTML += "<tr><td>"+item.quesid +"</td><td>"+item.ques_txt +"</td><td>"+item.ans_txt +"</td><td><a class=\"delete\" title=\"Delete\" data-toggle=\"tooltip\"><i class=\"material-icons\">&#xE872;</i></a></td></tr>";
+            }
+        } else {
+          $(".alert").hide()
+        }
+			}
+		});
+
+ 
+
+	$('#annotethis').on('click', function(event) {
+   
+    paraid = document.getElementById("paraid").innerText;
+		$.ajax({
+			data : {
+				paraid : paraid,
+				question : $('#question').val(),
+				answer : $('#answer').val()
+			},
+			type : 'POST',
+			url : '/annotThis',
+			beforeSend: function() {
+			$('.alert').alert()
+            $('#form-response').html("<img src=\"{{ url_for('static', filename='images/AjaxLoader.gif')}} \"/>");
+            },
+            complete: function () {
+            // hide the preloader (progress bar)
+            $('#form-response').html("");
+            }
+		})
+		.done(function(data) {
+      debugger;
+			if (data.error) {
+        $(".alert").hide()
+			}
+			else {
+          $(".alert").show()
+          document.getElementById("quesResult").innerHTML +=  "<tr><td>"+data.ques_id +"</td><td>"+data.ques_text +"</td><td>"+data.ans_text +"</td><td><a class=\"delete\" title=\"Delete\" data-toggle=\"tooltip\"><i class=\"material-icons\">&#xE872;</i></a></td></tr>";
+			}
+		});
+		event.preventDefault();
+	});
+
+	// Delete row on delete button click
+	$(document).on("click", ".delete", function(){
+      quesid =  $(this).parents("tr").children('td:first').text().trim();
+      alert(quesid)
+      $.ajax({
+        data : {
+          ques_id : quesid,
+        },
+        type : 'POST',
+        url : '/delQues'
+      })
+      .done(function(data) {
+        if (data == "Record Deleted!") {
+          $(this).parents().remove();
+        }
+      });
+
+    });
+
+});
+</script>
+<!-- JQuery -->
+
+</div>
+</body>
+</html>
+
+</body>
+</html>
