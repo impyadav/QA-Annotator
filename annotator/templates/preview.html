@@ -10,6 +10,9 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}" crossorigin="anonymous">
 
     <style>
+      .add{
+        cursor: pointer;
+        }
         #notification {
             position: absolute;
             top: 0;
@@ -135,28 +138,11 @@
 
 </head>
 <body>
-    <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button>
-
-  <div class="collapse navbar-collapse" id="navbarsExampleDefault">
-    <ul class="navbar-nav mr-auto">
-      <li class="nav-item active">
-        <a class="nav-link" href="/">Home </a>
-      </li>
-       <li class="nav-item">
-        <a class="nav-link" href="/details">Details <span class="sr-only">(current)</span></a>
-      </li>
-       <li class="nav-item">
-        <a class="nav-link" href="#">About</a>
-      </li>
-
-
-    </ul>
-
-  </div>
-</nav>
+<div style="margin-left: 1200px;">
+    <a href="#"><b>Docs</b></a>
+    &nbsp;&nbsp;
+    <a href="#"><b>Report Issue</b></a>
+</div>
 <br/>
 <br/>
 <br/>
@@ -179,18 +165,23 @@
             <div class="jumbotron jumbotron-fluid">
               <div class="container">
                 <h1 class="display-4">Start Your Annoations</h1>
-                  <p>Document id: <b><span id="paraid">{{row.paraid}}</span></b></p>
+                  <p style="display: none;">Document id: <b><span id="paraid">{{row.paraid}}</span></b></p>
                 <p class="lead">{{row.content}}</p>
               </div>
             </div>
               <!--Textarea with icon prefix-->
-            <div class="md-form mb-1 pink-textarea active-pink-textarea-2">
+              <div class="md-form mb-1 pink-textarea active-pink-textarea-2">
+                <i class="fas fa-question-circle prefix" aria-hidden="true"></i>
+                  <input id="question_tit" class="md-textarea form-control" placeholder="Question Title Here" type="text"/>
+              </div>
+              <div class="md-form mb-1 pink-textarea active-pink-textarea-2">
               <i class="fas fa-question-circle prefix" aria-hidden="true"></i>
                 <input id="question" class="md-textarea form-control" placeholder="Input Question Here" type="text"/>
             </div>
-            <div class="md-form mb-1 pink-textarea active-pink-textarea-2">
+            <div class="md-form mb-1 pink-textarea active-pink-textarea-2 ans">
               <i class="fa fa-reply" aria-hidden="true"></i>
-                <input id="answer" class="md-textarea form-control" placeholder="Input Answer Here" type="text"/>
+              <input id="answer" class="md-textarea form-control" placeholder="Input Answer Here" type="text"/>
+              <span class="fa fa-plus add"></span>
             </div>
            <input type="button" class="btn btn-primary" id="annotethis" value="Annoate This"></input>
            {% if rows.has_next %}
@@ -215,7 +206,7 @@
                 <table class="table table-bordered">
                     <thead>
                         <tr>
-                          <th>QuesID</th>
+                          <th style="display: none;">QuesID</th>
                           <th>Question</th>
                           <th>Answer</th>
                           <th>Actions</th>
@@ -248,6 +239,13 @@
 <script src="{{ url_for('static', filename='js/bootstrap.js') }}"></script>
 <script type="text/javascript">
 $(document).ready(function() {
+  var i = 1;
+  $('.add').on('click', function() {
+    var field = '<br><input id="answer_"'+i+' class="md-textarea form-control" placeholder="Input '+i+'nd Answer Here" type="text"/>';
+    $('.ans').append(field);
+    i = i+1;
+  })
+  
   para_id = document.getElementById("paraid").innerText;
   $.ajax({
 			data : {
@@ -266,7 +264,7 @@ $(document).ready(function() {
           $(".alert").show()
           data.forEach(myFunction);
           function myFunction(item) {
-              document.getElementById("quesResult").innerHTML += "<tr><td>"+item.quesid +"</td><td>"+item.ques_txt +"</td><td>"+item.ans_txt +"</td><td><a class=\"delete\" title=\"Delete\" data-toggle=\"tooltip\"><i class=\"material-icons\">&#xE872;</i></a></td></tr>";
+              document.getElementById("quesResult").innerHTML += "<tr><td  style=\"display: none;\">"+item.quesid +"</td><td>"+item.ques_txt +"</td><td>"+item.ans_txt +"</td><td><a class=\"delete\" title=\"Delete\" data-toggle=\"tooltip\"><i class=\"material-icons\">&#xE872;</i></a></td></tr>";
             }
         } else {
           $(".alert").hide()
@@ -279,11 +277,26 @@ $(document).ready(function() {
 	$('#annotethis').on('click', function(event) {
    
     paraid = document.getElementById("paraid").innerText;
+    var numItems = $('.ans').children('input').length;
+    var ans_text = ""
+    if (numItems > 1) {
+      $('.ans input[type="text"]').each(function(i,e){
+          // Do your magic here
+          if (numItems == i){
+            ans_text += e.value
+          } else{
+            ans_text += e.value+"|"
+          }
+      });
+    } else {
+      ans_text = $('#answer').val()
+    }
+
 		$.ajax({
 			data : {
 				paraid : paraid,
 				question : $('#question').val(),
-				answer : $('#answer').val()
+				answer : ans_text
 			},
 			type : 'POST',
 			url : '/annotThis',
