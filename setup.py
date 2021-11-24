@@ -9,8 +9,8 @@ setup(
     packages=['annotator'],
     url='https://github.com/impyadav/QA-Annotator',
     license='GPLv3',
-    author='Prateek Yadav',
-    author_email='impyadav.tech@gmail.com',
+    author='dummy',
+    author_email='dummy_mail',
     description='Question-Answering Annotation Tool',
     long_description=long_description
 )
