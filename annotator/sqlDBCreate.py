@@ -1,4 +1,3 @@
-#test1
 import sqlite3 as sql
 import sqlite3
 
