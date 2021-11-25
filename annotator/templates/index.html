@@ -1,11 +1,11 @@
-<!DOCTYPE html>
-<html>
-<head>
+<html><head>
 	<title>Annoation is Here</title>
-	<meta charset="utf-8" />
+	<meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}" crossorigin="anonymous">
+    <link rel="stylesheet" href="/static/css/bootstrap.min.css" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
 
 <style type="text/css">
   .files input {
@@ -23,6 +23,7 @@
     transition: outline-offset .15s ease-in-out, background-color .15s linear; border:1px solid #92b0b3;
  }
 .files{ position:relative}
+
 .files:after {  pointer-events: none;
     position: absolute;
     top: 60px;
@@ -31,7 +32,7 @@
     right: 0;
     height: 56px;
     content: "";
-    background-image: url(https://image.flaticon.com/icons/png/128/109/109612.png);
+    background-image: url(http://iamshubham.online/upload.png);
     display: block;
     margin: 0 auto;
     background-size: 100%;
@@ -45,7 +46,7 @@
     width: 100%;
     right: 0;
     height: 57px;
-    content: " or drag it here. ";
+
     display: block;
     margin: 0 auto;
     color: #2ea591;
@@ -57,7 +58,7 @@
     border-radius: 0 !important;
 }
 </style>
-  
+
     <!-- Font Awesome -->
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css">
 <!-- Bootstrap core CSS -->
@@ -66,38 +67,37 @@
 <link href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.7.3/css/mdb.min.css" rel="stylesheet">
 
 </head>
-<body>
-<div style="margin-left: 1200px;">
+<body style="font-family: Roboto,sans-serif;background-color:#fafffc;">
+<div style="margin-left: 956px;margin-right: 50px;padding-top: 20px;">
     <a href="#"><b>Docs</b></a>
     &nbsp;&nbsp;
     <a href="#"><b>Report Issue</b></a>
 </div>
-  
-<div class="container">
-  <div class="jumbotron jumbotron-fluid">
-    <br/>
+
+<div class="container" style="
+    text-align: -webkit-center;
+">
+    <!--<div class="jumbotron jumbotron-fluid">-->
+  <div>
+    <br>
     <div class="container">
-      <h1 class="display-4" style="font-family: monospace; text-align: center;">Annoation is all your need</h1>
+      <h1 class="display-4" style="font-family: 'Roboto';text-align: center;font-weight: 500;font-size: 70px;color: #290b83;margin-top: 20px;">Annoation is all your need</h1>
     </div>
-    <br/>
-    <br/>
+    <br>
+    <br>
     <form method="post" action="/processing" enctype="multipart/form-data">
-      <div class="form-group files">
-        <input type="file" class="form-control file_upload" name="file1"  multiple="">
-          <input type="hidden" name="isin" value="upload"/>
+      <div class="form-group files col-md-8">
+        <input type="file" class="form-control file_upload" name="file1" multiple="" style="
+    padding: 144px 0px 100px 35%;">
+          <input type="hidden" name="isin" value="upload">
       </div>
-      <button style="margin-left: 450px;"  type="submit" class="btn btn-primary">Start Process</button>
+      <button style="text-align: -webkit-center;margin-top: 30px;font-weight: bold;" type="submit" class="btn btn-primary">Start Process</button>
     </form>
 
   </div>
 </div>
 
-<script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
-<script src="{{ url_for('static', filename='js/bootstrap.js') }}"></script>
+<script src="/static/js/bootstrap.min.js"></script>
+<script src="/static/js/bootstrap.js"></script>
 
-
-</body>
-</html>
-
-</body>
-</html>
+</body></html>
