@@ -1,8 +1,9 @@
 import sqlite3
 import os
+from flask.wrappers import Response
 import jsonify
 from waitress import serve
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, make_response, send_file
 import sqlite3 as sql
 from uuid import uuid4
 
@@ -13,8 +14,12 @@ from sqlalchemy import Table, Column, Integer, ForeignKey
 from sqlalchemy import text, insert, func
 from datetime import datetime
 import re
+from flask_cors import CORS
+
+from exportSquadJson import ExportJson
 
 app = Flask(__name__)
+CORS(app, expose_headers=["Content-Disposition"])
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db1.sqlite3'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
@@ -25,6 +30,7 @@ class annoatations(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     paraid = db.Column(db.String(100), nullable=False)
     doc_id = db.Column(db.String(100), nullable=False, )
+    para_tit = db.Column(db.String(200), nullable=True)
     content = db.Column(db.Text, nullable=False)
     status = db.Column(db.String(100))
     entrydate = db.Column(db.DateTime, default=datetime.utcnow)
@@ -45,7 +51,6 @@ class questions(db.Model):
 
 class answers(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(200), nullable=False)
     question_id = db.Column(db.String(100), nullable=False)
     answer_id = db.Column(db.String(100), nullable=False)
     answer_content = db.Column(db.String(500), nullable=False)
@@ -105,7 +110,6 @@ def deatils():
 
 docid = ""
 
-
 @app.route('/processing', methods=['POST'])
 def index_post():
     isin = request.form['isin']
@@ -148,7 +152,7 @@ def preview(page_num, paraid='Anonymous'):
     return render_template('preview.html', allDataCount=100, rows=rows)
 
 
-def addingAns(quesid, ans_text):
+def addingAns(quesid,ans_text):
     try:
         ans_id = str(uuid4())
         ans = answers(question_id=quesid, answer_id=ans_id, answer_content=ans_text)
@@ -158,26 +162,51 @@ def addingAns(quesid, ans_text):
     except:
         return jsonify({"error": "Not added"})
 
+@app.route('/exportAsJson', methods=["GET", "POST"])
+def exportAsJson():
+    para_id = request.form['paraid']
+    if request.method == "POST":
+        classObj = ExportJson(r'db1.sqlite3', 'annoatations', 'questions', 'answers')
+        with open('annotations.json', 'w') as outfile:
+            json.dump(classObj.sql_df_to_squad_json(), outfile)
+        try:
+            return send_file(
+                    "annotations.json",
+                    as_attachment=True,
+                    attachment_filename="annotations.json"
+                )
+        except Exception as e:
+            return str(e)
+
+
 
 @app.route('/annotThis', methods=["GET", "POST"])
 def annotThis():
     if request.method == "POST":
         ques_id = str(uuid4())
         para_id = request.form['paraid']
+        para_tit = request.form['para_tit']
+        
         ques_text = request.form['question']
         ans_text = request.form['answer']
         try:
-            quest = questions(paraid=para_id, ques_id=ques_id, question=ques_text)
-            db.session.add(quest)
+            db.session.query(annoatations).filter(annoatations.paraid == para_id).update({'para_tit': para_tit})
             db.session.commit()
-            anscount = ans_text.split('|')
-            listAns = []
-            for ans in anscount:
-                if ans != "":
-                    listAns.append(ans)
-                    ans_add = addingAns(ques_id, ans)
-            return jsonify({"para_id": para_id, "ques_id": ques_id, "ques_text": ques_text,
-                            "ans_text": [ans + '<br/>' for ans in listAns]})
+            try:
+                quest = questions(paraid=para_id, ques_id=ques_id, question=ques_text)
+                db.session.add(quest)
+                db.session.commit()
+                anscount = ans_text.split('|')
+                listAns = []
+                for ans in anscount:
+                    if ans != "":
+                        listAns.append(ans)
+                        ans_add = addingAns(ques_id, ans)
+                return jsonify({"para_id": para_id, "ques_id": ques_id, "ques_text": ques_text,
+                                    "ans_text": [ans + '<br/>' for ans in listAns]})
+            except:
+                return jsonify({"error": "Not added"})
+
         except Exception as ex:
             return jsonify({"error": "Not added"})
 

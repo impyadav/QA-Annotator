@@ -53,10 +53,10 @@ class ExportJson:
         return main_df, para_question_df, question_answer_df
 
     def get_all_questions_from_paraId(self, para_id, para_qs_df):
-        groupObj = para_qs_df.groupby(para_qs_df.para_id)
+        groupObj = para_qs_df.groupby(para_qs_df.paraid)
         for item in list(groupObj):
             if item[0] == para_id:
-                return item[1][['para_title', 'question_id', 'question_content']].reset_index().to_dict('list')
+                return item[1][['ques_id', 'question']].reset_index().to_dict('list')
 
     def get_all_answers_from_questionId(self, qid, qa_ans_df):
         groupObj = qa_ans_df.groupby(qa_ans_df.question_id)
@@ -70,28 +70,34 @@ class ExportJson:
         main_df, para_qs_df, qs_ans_df = list_of_df
         for idx, row in main_df.iterrows():
             temp_dict = {}
-            paraId = row['paragraph_id']
+            paraId = row['paraid']
 
             # fetch qid from para_id
             questions_fetch = self.get_all_questions_from_paraId(paraId, para_qs_df)
-            temp_dict['context'] = row['paragraph_content']
-            temp_dict['title'] = list(set(questions_fetch['para_title']))[0]
+            temp_dict['context'] = row['content']
+            temp_dict['title'] = row['para_tit']
 
             # fetch aid from qid
             qas_dict = {}
             qas_list = []
-            for qid, qContent in zip(questions_fetch['question_id'], questions_fetch['question_content']):
-                all_answers = self.get_all_answers_from_questionId(qid, qs_ans_df)['answer_content']
-                qas_dict['answers'] = [{'answer_start': 'start_location', 'text': item} for item in all_answers]
-                qas_dict['id'] = uuid.uuid4().hex
-                qas_dict['question'] = qContent
-                qas_list.append(qas_dict)
-            temp_dict['qas'] = qas_list
-            final_list.append(temp_dict)
+            try:
+                for qid, qContent in zip(questions_fetch['ques_id'], questions_fetch['question']):
+                    all_answers = self.get_all_answers_from_questionId(qid, qs_ans_df)
+                    if not all_answers == None:
+                        qas_dict['answers'] = [{'answer_start': 'start_location', 'text': item} for item in all_answers['answer_content']]
+                        qas_dict['id'] = uuid.uuid4().hex
+                        qas_dict['question'] = qContent
+                        qas_list.append(qas_dict)
+                    temp_dict['qas'] = qas_list
+                
+                final_list.append(temp_dict)
+            except:
+                {'data': []}
         return {'data': final_list}
 
 
 if __name__ == '__main__':
-    pass
-    # classObj = ExportJson(r'annotation_v3.db', 'annotate_main_table', 'annotate_para_questions', 'annotate_question_answers')
-    # print(classObj.sql_df_to_squad_json())
+    # pass
+    print("RUNNING ==============")
+    classObj = ExportJson(r'db1.sqlite3', 'annoatations', 'questions', 'answers')
+    print(classObj.sql_df_to_squad_json())
