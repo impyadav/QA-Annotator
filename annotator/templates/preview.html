@@ -151,6 +151,7 @@
 <div class="container">
   <div class="row">
     <!-- <button type="button" id="exportAsJson" class="btn btn-warning">Export as JSON</button> -->
+    <!-- <a class="btn btn-success" href="{{ url_for('exportAsJson') }}">Export as JSON</a> -->
 
     {% if rows.pages > 0%}
     <div class="col-md-16">
@@ -201,7 +202,8 @@
              <a class="btn btn-success" href="{{ url_for('preview', page_num=rows.next_num) }}">Next &raquo;</a>
             {% else %}
             <button type="button" class="btn btn-success" disabled>Next</button>
-            <button type="button" id="exportAsJson" class="btn btn-warning">Export as JSON</button>
+            <a class="btn btn-success" href="{{ url_for('exportAsJson') }}">Export as JSON</a>
+            <!-- <button type="button" id="exportAsJson" class="btn btn-warning">Export as JSON</button> -->
             {% endif %}
             <hr/>
             <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -277,7 +279,7 @@ $(document).ready(function() {
 
  
     
-  $('#exportAsJson').on('click', function(event) {
+  $('#exportAsJson_1').on('click', function(event) {
    
    paraid = document.getElementById("paraid").innerText;
 
@@ -285,7 +287,7 @@ $(document).ready(function() {
      data : {
        paraid : paraid
      },
-     type : 'POST',
+     type : 'GET',
      url : '/exportAsJson',
      beforeSend: function() {
      $('.alert').alert()
