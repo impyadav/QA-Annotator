@@ -254,6 +254,21 @@ def delQues():
         except:
             return "error"
 
+@app.route('/delAnsTxtArea', methods=["POST"])
+def delAnsTxtArea():
+    if request.method == "POST":
+        anstxtareaid = request.form['anstxtarea_id']
+        try:
+            me = questions.query.filter_by(answer_id=anstxtareaid).first()
+            db.session.delete(me)
+            db.session.commit()
+            # me = answers.query.filter_by(quesid=anstxtareaid).first()
+            # db.session.delete(me)
+            # db.session.commit()
+            return "Record Deleted!"
+        except:
+            return "error"
+
 
 if __name__ == '__main__':
     db.create_all()
