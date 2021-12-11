@@ -164,21 +164,29 @@ def addingAns(quesid,ans_text):
 
 @app.route('/exportAsJson', methods=["GET", "POST"])
 def exportAsJson():
-    para_id = request.form['paraid']
-    if request.method == "POST":
+    # para_id = request.form['paraid']
+    if request.method == "GET":
         classObj = ExportJson(r'db1.sqlite3', 'annoatations', 'questions', 'answers')
         with open('annotations.json', 'w') as outfile:
             json.dump(classObj.sql_df_to_squad_json(), outfile)
         try:
-            return send_file(
-                    "annotations.json",
-                    as_attachment=True,
-                    attachment_filename="annotations.json"
-                )
+            return render_template("download.html")
         except Exception as e:
             return str(e)
+        
+        # try:
+        #     return send_file(
+        #             "annotations.json",
+        #             as_attachment=True,
+        #             attachment_filename="annotations.json"
+        #         )
+        # except Exception as e:
+        #     return str(e)
 
 
+@app.route('/download')
+def download():
+   return send_file('annotations.json', as_attachment=True)
 
 @app.route('/annotThis', methods=["GET", "POST"])
 def annotThis():
