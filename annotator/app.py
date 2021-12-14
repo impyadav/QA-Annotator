@@ -1,22 +1,15 @@
-import sqlite3
-import os
-from flask.wrappers import Response
-import jsonify
-from waitress import serve
-from flask import Flask, render_template, request, make_response, send_file
-import sqlite3 as sql
+import json
+import re
+from datetime import datetime
 from uuid import uuid4
 
-import json
-from flask import Flask, request, jsonify
-from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import Table, Column, Integer, ForeignKey
-from sqlalchemy import text, insert, func
-from datetime import datetime
-import re
-from flask_cors import CORS
-
+import jsonify
 from exportSquadJson import ExportJson
+from flask import Flask, request, jsonify
+from flask import render_template, send_file
+from flask_cors import CORS
+from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import func
 
 app = Flask(__name__)
 CORS(app, expose_headers=["Content-Disposition"])
