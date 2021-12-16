@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Annoation is Here</title>
+	<title>QA Annotation</title>
 	<meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -138,10 +138,10 @@
 
 </head>
 <body>
-<div style="margin-left: 1200px;">
-    <a href="#"><b>Docs</b></a>
+<div style="font-family: 'Roboto Mono, monospace; margin-left: 1200px;">
+    <a style = "font-family: 'Roboto Mono, monospace;" href="https://github.com/impyadav/QA-Annotator/tree/main#qa-annotator" target="_blank"><b>Docs</b></a>
     &nbsp;&nbsp;
-    <a href="#"><b>Report Issue</b></a>
+    <a style = "font-family: 'Roboto Mono, monospace;" href="https://github.com/impyadav/QA-Annotator/issues/new" target="_blank"><b>Report Issue</b></a>
 </div>
 <br/>
 <br/>
@@ -164,10 +164,10 @@
        
         <span class="badge badge-danger">Paragraph {{ rows.page }} of {{ rows.pages }} <span class="form-response"></span></span>
         {% for row in rows.items %} 
-        <div class="mb-10 shadow-sm">
+        <div style = "font-family: 'Roboto Mono, monospace;" class="mb-10 shadow-sm">
             <div class="jumbotron jumbotron-fluid">
               <div class="container">
-                <h1 class="display-4">Start Your Annoations</h1>
+                <h1 style = "font-family: 'Roboto Mono, monospace;" class="display-4">Start Your Annoations</h1>
                   <p style="display: none;">Document id: <b><span id="paraid">{{row.paraid}}</span></b></p>
                 <p class="lead">{{row.content}}</p>
               </div>

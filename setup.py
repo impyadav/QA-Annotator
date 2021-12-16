@@ -8,9 +8,9 @@ setup(
     version='1.0.0',
     packages=['annotator'],
     url='https://github.com/impyadav/QA-Annotator',
-    license='GPLv3',
-    author='dummy',
-    author_email='dummy_mail',
-    description='Question-Answering Annotation Tool',
+    license='MIT',
+    author='Praveen Singh, Shubham Modi, Prateek Yadav',
+    author_email='impyadav.tech@gmail.com',
+    description='Data Annotation Tool for NLP-based Question-Answering systems',
     long_description=long_description
 )
