@@ -1,4 +1,9 @@
-<div id="top"></div>
+<h1 style="font-family: 'Roboto Mono', monospace;text-align align="center">QA-Annotator: Annotation Is All You Need</h1>
+
+
+![PyPI - License](https://img.shields.io/pypi/l/QA-Annotator)
+
+![PyPI](https://img.shields.io/pypi/v/QA-Annotator)
 
 
 <!-- ABOUT THE PROJECT -->
