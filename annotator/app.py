@@ -240,7 +240,7 @@ def delQues():
             me = questions.query.filter_by(ques_id=quesid).first()
             db.session.delete(me)
             db.session.commit()
-            me = answers.query.filter_by(quesid=quesid).first()
+            me = answers.query.filter_by(question_id=quesid).first()
             db.session.delete(me)
             db.session.commit()
             return "Record Deleted!"
