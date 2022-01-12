@@ -6,7 +6,7 @@ from uuid import uuid4
 
 import jsonify
 import flask
-from exportSquadJson import ExportJson
+from .exportSquadJson import ExportJson
 from flask import Flask, request, jsonify
 from flask import render_template, send_file
 from flask_cors import CORS

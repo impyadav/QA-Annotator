@@ -8,7 +8,7 @@ with open('requirements.txt') as f:
 
 setup(
     name='qa_annotator',
-    version='1.0.0.dev9',
+    version='1.0.0.dev15',
     packages=find_packages(),
     # include_package_data=True,
     package_data={
