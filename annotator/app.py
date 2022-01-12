@@ -1,9 +1,11 @@
 import json
+import click
 import re
 from datetime import datetime
 from uuid import uuid4
 
 import jsonify
+import flask
 from exportSquadJson import ExportJson
 from flask import Flask, request, jsonify
 from flask import render_template, send_file
@@ -11,10 +13,17 @@ from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import func
 
-app = Flask(__name__)
-CORS(app, expose_headers=["Content-Disposition"])
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db1.sqlite3'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+def create_app():
+    app1 = Flask(__name__)
+    CORS(app1, expose_headers=["Content-Disposition"])
+    app1.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db1.sqlite3'
+    app1.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+    return app1
+
+
+app = create_app()
 
 db = SQLAlchemy(app)
 
@@ -103,6 +112,7 @@ def deatils():
 
 docid = ""
 
+
 @app.route('/processing', methods=['POST'])
 def index_post():
     isin = request.form['isin']
@@ -145,7 +155,7 @@ def preview(page_num, paraid='Anonymous'):
     return render_template('preview.html', allDataCount=100, rows=rows)
 
 
-def addingAns(quesid,ans_text):
+def addingAns(quesid, ans_text):
     try:
         ans_id = str(uuid4())
         ans = answers(question_id=quesid, answer_id=ans_id, answer_content=ans_text)
@@ -154,6 +164,7 @@ def addingAns(quesid,ans_text):
         return jsonify({"success": ans_id})
     except:
         return jsonify({"error": "Not added"})
+
 
 @app.route('/exportAsJson', methods=["GET", "POST"])
 def exportAsJson():
@@ -166,7 +177,7 @@ def exportAsJson():
             return render_template("download.html")
         except Exception as e:
             return str(e)
-        
+
         # try:
         #     return send_file(
         #             "annotations.json",
@@ -179,7 +190,8 @@ def exportAsJson():
 
 @app.route('/download')
 def download():
-   return send_file('annotations.json', as_attachment=True)
+    return send_file('annotations.json', as_attachment=True)
+
 
 @app.route('/annotThis', methods=["GET", "POST"])
 def annotThis():
@@ -187,7 +199,7 @@ def annotThis():
         ques_id = str(uuid4())
         para_id = request.form['paraid']
         para_tit = request.form['para_tit']
-        
+
         ques_text = request.form['question']
         ans_text = request.form['answer']
         try:
@@ -204,7 +216,7 @@ def annotThis():
                         listAns.append(ans)
                         ans_add = addingAns(ques_id, ans)
                 return jsonify({"para_id": para_id, "ques_id": ques_id, "ques_text": ques_text,
-                                    "ans_text": [ans + '<br/>' for ans in listAns]})
+                                "ans_text": [ans + '<br/>' for ans in listAns]})
             except:
                 return jsonify({"error": "Not added"})
 
@@ -247,6 +259,7 @@ def delQues():
         except:
             return "error"
 
+
 @app.route('/delAnsTxtArea', methods=["POST"])
 def delAnsTxtArea():
     if request.method == "POST":
@@ -263,8 +276,7 @@ def delAnsTxtArea():
             return "error"
 
 
-if __name__ == '__main__':
+# @click.group(cls=flask.cli.FlaskGroup, create_app=create_app)
+def main():
     db.create_all()
-    # app.run(port=5004)
-    app.run(use_debugger=True, use_reloader=False, passthrough_errors=True)
-# serve(app, host='0.0.0.0', port=7765)
+    app.run(port=5001, use_debugger=True, use_reloader=False, passthrough_errors=True)
